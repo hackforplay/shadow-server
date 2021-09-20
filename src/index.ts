@@ -1,7 +1,6 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import cors from "cors";
 
 const app = express();
 const server = createServer(app);
@@ -19,15 +18,13 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   console.log("a user connected");
 
-  socket.broadcast.emit("spawn", "{}");
-
-  socket.on("sync", (json) => {
-    socket.broadcast.emit("sync", json);
+  socket.on("update", (json) => {
+    socket.broadcast.emit("sync", socket.id + "\n" + json);
   });
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
-    socket.broadcast.emit("remove", "{}");
+    socket.broadcast.emit("remove", socket.id);
   });
 });
 
