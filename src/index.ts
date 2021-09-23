@@ -17,14 +17,31 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
   console.log("a user connected");
+  let room = "";
 
-  socket.on("update", (json) => {
-    socket.broadcast.emit("sync", socket.id + "\n" + json);
+  // ゲームを始めた・マップが変わったとき
+  socket.on("enter room", (newRoom) => {
+    if (room) {
+      // 以前いたルームから出る
+      socket.leave(room);
+      socket.to(room).emit("leave room", socket.id);
+    }
+    room = newRoom;
+    socket.join(room);
+    console.log(`user ${socket.id} joined room ${room}`);
   });
 
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-    socket.broadcast.emit("remove", socket.id);
+  socket.on("update", (json) => {
+    if (room) {
+      socket.to(room).emit("sync", socket.id + "\n" + json);
+    }
+  });
+
+  socket.on("disconnecting", () => {
+    console.log("user disconnecting");
+    if (room) {
+      socket.to(room).emit("leave room", socket.id);
+    }
   });
 });
 
