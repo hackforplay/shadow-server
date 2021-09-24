@@ -12,16 +12,23 @@ WORKDIR /usr/src/app
 # Copying this first prevents re-running npm install on every code change.
 COPY package*.json ./
 
+# ビルドに必要なファイルをコピーする
+COPY tsconfig.json ./
+
 # Install production dependencies.
 # If you add a package-lock.json, speed your build by switching to 'npm ci'.
-# RUN npm ci --only=production
-RUN npm install --only=production
+RUN npm ci
+# RUN npm install --only=production
+
 
 # Copy local code to the container image.
 COPY . ./
 
+# ビルド
+RUN npm run build
+
 # Run the web service on container startup.
-CMD [ "node", "index.js" ]
+CMD [ "node", "lib/index.js" ]
 
 # [END run_helloworld_dockerfile]
 # [END cloudrun_helloworld_dockerfile]
