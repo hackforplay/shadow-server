@@ -17,7 +17,7 @@
     "url": "git+https://github.com/hackforplay/kage-server.git"
   },
   "author": "",
-  "license": "UNLICENCED",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/hackforplay/kage-server/issues"
   },
